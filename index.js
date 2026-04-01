@@ -1,32 +1,39 @@
+import jsonfile from "jsonfile";
+import moment from "moment";
+import simpleGit from "simple-git";
+import random from "random";
+
+const FILE_PATH = "./data.json";
+const git = simpleGit();
+
 const makeCommits = async (n) => {
   for (let i = 0; i < n; i++) {
-
-    const day = random.int(1, 28); // February days
+    const x = random.int(5, 24);
+    const y = random.int(5, 6);
 
     const date = moment()
-      .year(2026)          // 🔥 change year if needed
-      .month(1)            // February = 1 (0 = Jan)
-      .date(day)
-      .hour(12)
-      .minute(0)
-      .second(0)
+      .subtract(1, "year")
+      .add(x, "weeks")
+      .add(y, "days")
       .format();
 
-    const data = {
-      date,
-      random: Math.random() // ensure change
-    };
+    const data = { date };
 
     console.log(`Commit ${i + 1}: ${date}`);
 
+    // Write file
     await jsonfile.writeFile(FILE_PATH, data);
-    await git.add(FILE_PATH);
-    await git.commit(`Feb commit ${i + 1}`, {
-      "--date": date
-    });
+
+    // Git add + commit with backdate
+    await git.add([FILE_PATH]);
+    await git.commit(date, undefined, { "--date": date });
   }
 
-  await git.push("origin", "main");
+  // Push after all commits
+  await git.push();
 
-  console.log("✅ February commits pushed!");
+  console.log("✅ All commits pushed!");
 };
+
+// Run
+makeCommits(100);
