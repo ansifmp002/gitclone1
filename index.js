@@ -1,3 +1,10 @@
+import jsonfile from "jsonfile";
+import moment from "moment";
+import simpleGit from "simple-git";
+
+const FILE_PATH = "./data.json";
+const git = simpleGit();
+
 const makeCommits = async () => {
   const letters = {
     A: [
@@ -51,7 +58,9 @@ const makeCommits = async () => {
 
   let startDate = moment("2023-01-01");
   let weekOffset = 0;
-  let count = 0; // 🔥 counter like your original code
+  let count = 0;
+
+  console.log("🚀 Starting ANSIF commits...\n");
 
   for (let letter of word) {
     const pattern = letters[letter];
@@ -59,7 +68,7 @@ const makeCommits = async () => {
     for (let y = 0; y < pattern.length; y++) {
       for (let x = 0; x < pattern[y].length; x++) {
         if (pattern[y][x] === "1") {
-          count++; // increment commit number
+          count++;
 
           const date = startDate
             .clone()
@@ -69,10 +78,9 @@ const makeCommits = async () => {
 
           const data = {
             date,
-            random: Math.random(),
+            random: Math.random(), // ensures change
           };
 
-          // ✅ SAME STYLE AS YOUR ORIGINAL SCRIPT
           console.log(`Commit ${count}: ${date}`);
 
           await jsonfile.writeFile(FILE_PATH, data);
@@ -84,10 +92,14 @@ const makeCommits = async () => {
       }
     }
 
-    weekOffset += 6;
+    weekOffset += 6; // space between letters
   }
 
+  console.log("\n📤 Pushing to GitHub...");
   await git.push("origin", "main");
 
-  console.log("✅ All commits pushed!");
+  console.log("✅ ANSIF successfully created!");
 };
+
+// 🔥 RUN FUNCTION
+makeCommits().catch(console.error);
