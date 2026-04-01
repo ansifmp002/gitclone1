@@ -36,4 +36,4 @@ const makeCommits = async (n) => {
 };
 
 // Run
-makeCommits(1);
+makeCommits(10);
