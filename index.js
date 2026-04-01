@@ -1,89 +1,32 @@
-const makeCommits = async () => {
-  const letters = {
-    A: [
-      "01110",
-      "10001",
-      "10001",
-      "11111",
-      "10001",
-      "10001",
-      "10001",
-    ],
-    N: [
-      "10001",
-      "11001",
-      "10101",
-      "10011",
-      "10001",
-      "10001",
-      "10001",
-    ],
-    S: [
-      "01111",
-      "10000",
-      "10000",
-      "01110",
-      "00001",
-      "00001",
-      "11110",
-    ],
-    I: [
-      "11111",
-      "00100",
-      "00100",
-      "00100",
-      "00100",
-      "00100",
-      "11111",
-    ],
-    F: [
-      "11111",
-      "10000",
-      "10000",
-      "11110",
-      "10000",
-      "10000",
-      "10000",
-    ],
-  };
+const makeCommits = async (n) => {
+  for (let i = 0; i < n; i++) {
 
-  const word = ["A", "N", "S", "I", "F"];
+    const day = random.int(1, 28); // February days
 
-  let startDate = moment("2024-01-01");
-  let weekOffset = 0;
+    const date = moment()
+      .year(2026)          // 🔥 change year if needed
+      .month(1)            // February = 1 (0 = Jan)
+      .date(day)
+      .hour(12)
+      .minute(0)
+      .second(0)
+      .format();
 
-  for (let letter of word) {
-    const pattern = letters[letter];
+    const data = {
+      date,
+      random: Math.random() // ensure change
+    };
 
-    for (let y = 0; y < pattern.length; y++) {
-      for (let x = 0; x < pattern[y].length; x++) {
-        if (pattern[y][x] === "1") {
-          const date = startDate
-            .clone()
-            .add(weekOffset + x, "weeks")
-            .add(y, "days")
-            .format();
+    console.log(`Commit ${i + 1}: ${date}`);
 
-          const data = {
-            date,
-            random: Math.random(),
-          };
-
-          console.log(`Commit ${letter}: ${date}`);
-
-          await jsonfile.writeFile(FILE_PATH, data);
-          await git.add(FILE_PATH);
-          await git.commit(`draw ${letter}`, {
-            "--date": date,
-          });
-        }
-      }
-    }
-
-    weekOffset += 6; // spacing between letters
+    await jsonfile.writeFile(FILE_PATH, data);
+    await git.add(FILE_PATH);
+    await git.commit(`Feb commit ${i + 1}`, {
+      "--date": date
+    });
   }
 
   await git.push("origin", "main");
 
-  console.log("✅ ANSIF created in 2023!");
+  console.log("✅ February commits pushed!");
 };
